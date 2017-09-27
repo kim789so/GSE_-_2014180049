@@ -14,10 +14,10 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
-#include "class1.h"
+#include "CObject.h"
 
 Renderer *g_Renderer = NULL;
-CCobject Cobject;
+CObject Object;
 
 void RenderScene(void)
 {
@@ -25,8 +25,8 @@ void RenderScene(void)
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	// Renderer Test
-	g_Renderer->DrawSolidRect(Cobject.getx(),Cobject.gety(), Cobject.getz(),
-		Cobject.getsize(), Cobject.getr(), Cobject.getg(), Cobject.getb(), Cobject.geta());
+	g_Renderer->DrawSolidRect(Object.GetPos().x, Object.GetPos().y, Object.GetPos().z,
+		Object.GetSize(), Object.GetColor().r, Object.GetColor().g, Object.GetColor().b, Object.GetColor().a);
 
 	glutSwapBuffers();
 }
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();
-	Cobject.init(0, 0, 0, 4, 1, 0, 1, 1);
+	Object.Init(Pos(0, 0, 0), 4, Color(1,0,1,1));
 
 	if (glewIsSupported("GL_VERSION_3_0"))
 	{
