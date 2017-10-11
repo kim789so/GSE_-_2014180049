@@ -28,12 +28,14 @@ void RenderScene(void)
 	g_Renderer->DrawSolidRect(Object.GetPos().x, Object.GetPos().y, Object.GetPos().z,
 		Object.GetSize(), Object.GetColor().r, Object.GetColor().g, Object.GetColor().b, Object.GetColor().a);
 
+	Object.Update();
 	glutSwapBuffers();
 }
 
 void Idle(void)
 {
 	RenderScene();
+	Object.Update();	
 }
 
 void MouseInput(int button, int state, int x, int y)

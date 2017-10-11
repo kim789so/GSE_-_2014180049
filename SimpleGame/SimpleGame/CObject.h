@@ -33,6 +33,7 @@ class CObject
 public:
 	void Init(Pos pos, float size, Color color);
 
+	void Update();
 	Pos GetPos() { return m_pos; }
 	float GetSize() { return m_size; }
 	Color GetColor() { return m_color; }
@@ -41,5 +42,6 @@ protected:
 	Pos m_pos;
 	float m_size;
 	Color m_color;
+
 
 };
