@@ -1,5 +1,7 @@
 
 
+#define MAX_OBJECTS_COUNT 50
+
 struct Pos
 {
 	float x, y, z;
@@ -32,14 +34,24 @@ class CObject
 {
 public:
 	void Init(Pos pos, float size, Color color);
-
 	void Update();
+
+public:
 	Pos GetPos() { return m_pos; }
 	float GetSize() { return m_size; }
 	Color GetColor() { return m_color; }
 
+public:
+	void SetPos(const Pos pos) { m_pos = pos; }
+	void SetSize(float size) { m_size = size; }
+	void SetColor(Color color) { m_color = color; }
+
+public:
+	bool CheckCollision(CObject& other);
+
 protected:
 	Pos m_pos;
+	Pos m_vPos;
 	float m_size;
 	Color m_color;
 

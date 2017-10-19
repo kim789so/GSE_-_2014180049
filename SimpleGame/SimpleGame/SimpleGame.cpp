@@ -14,10 +14,11 @@ but WITHOUT ANY WARRANTY.
 #include "Dependencies\freeglut.h"
 
 #include "Renderer.h"
-#include "CObject.h"
+#include "Define.h"
 
 Renderer *g_Renderer = NULL;
-CObject Object;
+
+SceneMgr g_SceneMgr;
 
 void RenderScene(void)
 {
@@ -25,17 +26,20 @@ void RenderScene(void)
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	// Renderer Test
-	g_Renderer->DrawSolidRect(Object.GetPos().x, Object.GetPos().y, Object.GetPos().z,
-		Object.GetSize(), Object.GetColor().r, Object.GetColor().g, Object.GetColor().b, Object.GetColor().a);
+	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i) {
+		g_Renderer->DrawSolidRect(g_SceneMgr.GetObj()[i].GetPos().x, g_SceneMgr.GetObj()[i].GetPos().y, g_SceneMgr.GetObj()[i].GetPos().z,
+			g_SceneMgr.GetObj()[i].GetSize(), g_SceneMgr.GetObj()[i].GetColor().r, g_SceneMgr.GetObj()[i].GetColor().g,
+			g_SceneMgr.GetObj()[i].GetColor().b, g_SceneMgr.GetObj()[i].GetColor().a);
+	}
 
-	Object.Update();
+	g_SceneMgr.Update();
 	glutSwapBuffers();
 }
 
 void Idle(void)
 {
 	RenderScene();
-	Object.Update();	
+	g_SceneMgr.Update();
 }
 
 void MouseInput(int button, int state, int x, int y)
@@ -63,7 +67,7 @@ int main(int argc, char **argv)
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();
-	Object.Init(Pos(0, 0, 0), 4, Color(1,0,1,1));
+	g_SceneMgr.Init();
 
 	if (glewIsSupported("GL_VERSION_3_0"))
 	{
