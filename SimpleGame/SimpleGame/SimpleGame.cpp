@@ -16,34 +16,54 @@ but WITHOUT ANY WARRANTY.
 #include "Renderer.h"
 #include "Define.h"
 
+
 Renderer *g_Renderer = NULL;
 
 SceneMgr g_SceneMgr;
 
+DWORD last = GetTickCount();
+DWORD Time = 0;
 void RenderScene(void)
 {
+	DWORD curr = GetTickCount();
+	Time = curr - last;
+	last = curr;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	// Renderer Test
 	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i) {
-		g_Renderer->DrawSolidRect(g_SceneMgr.GetObj()[i].GetPos().x, g_SceneMgr.GetObj()[i].GetPos().y, g_SceneMgr.GetObj()[i].GetPos().z,
-			g_SceneMgr.GetObj()[i].GetSize(), g_SceneMgr.GetObj()[i].GetColor().r, g_SceneMgr.GetObj()[i].GetColor().g,
-			g_SceneMgr.GetObj()[i].GetColor().b, g_SceneMgr.GetObj()[i].GetColor().a);
+		
+		if (g_SceneMgr.GetObj()[i] != nullptr) {
+			g_Renderer->DrawSolidRect(g_SceneMgr.GetObj()[i]->GetPos().x, g_SceneMgr.GetObj()[i]->GetPos().y, g_SceneMgr.GetObj()[i]->GetPos().z,
+				g_SceneMgr.GetObj()[i]->GetSize(), g_SceneMgr.GetObj()[i]->GetColor().r, g_SceneMgr.GetObj()[i]->GetColor().g,
+				g_SceneMgr.GetObj()[i]->GetColor().b, g_SceneMgr.GetObj()[i]->GetColor().a);
+		}
 	}
 
-	g_SceneMgr.Update();
+	g_SceneMgr.Update((float)Time);
 	glutSwapBuffers();
 }
 
 void Idle(void)
 {
 	RenderScene();
-	g_SceneMgr.Update();
+	g_SceneMgr.Update((float)Time);
 }
 
 void MouseInput(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		Pos pos(x, y, 0.0f);
+		pos.x = x - 250.0f;
+		pos.y = 250.0f - y;
+		CObject obj;
+		obj.Init(pos, 4, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		g_SceneMgr.AddObject(obj);
+
+
+	}
+
 	RenderScene();
 }
 

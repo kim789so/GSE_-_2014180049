@@ -34,26 +34,27 @@ class CObject
 {
 public:
 	void Init(Pos pos, float size, Color color);
-	void Update();
+	void Update(float time);
 
 public:
 	Pos GetPos() { return m_pos; }
 	float GetSize() { return m_size; }
 	Color GetColor() { return m_color; }
-
+	float GetLife() { return m_life; }
+	float GetLifeTime() { return m_lifeTime; }
 public:
 	void SetPos(const Pos pos) { m_pos = pos; }
 	void SetSize(float size) { m_size = size; }
 	void SetColor(Color color) { m_color = color; }
 
 public:
-	bool CheckCollision(CObject& other);
+	bool CheckCollision(CObject* other);
 
 protected:
 	Pos m_pos;
 	Pos m_vPos;
 	float m_size;
 	Color m_color;
-
+	float m_life, m_lifeTime;
 
 };

@@ -2,7 +2,6 @@
 
 #include <time.h>
 #include <iostream>
-
 using namespace std;
 
 #include"CObject.h"
@@ -13,4 +12,6 @@ using namespace std;
 #define WINDOW_WIDTH 500
 #define WINDOW_HEIGHT 500
 
-#define SPEED 5
+#define SPEED 30
+#define LIFE 100000
+#define LIFE_TIME 3
