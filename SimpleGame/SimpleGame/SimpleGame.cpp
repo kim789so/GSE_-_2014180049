@@ -17,7 +17,6 @@ but WITHOUT ANY WARRANTY.
 #include "Define.h"
 
 
-Renderer *g_Renderer = NULL;
 
 SceneMgr g_SceneMgr;
 
@@ -32,14 +31,7 @@ void RenderScene(void)
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
 	// Renderer Test
-	for (int i = 0; i < MAX_OBJECTS_COUNT; ++i) {
-		
-		if (g_SceneMgr.GetObj()[i] != nullptr) {
-			g_Renderer->DrawSolidRect(g_SceneMgr.GetObj()[i]->GetPos().x, g_SceneMgr.GetObj()[i]->GetPos().y, g_SceneMgr.GetObj()[i]->GetPos().z,
-				g_SceneMgr.GetObj()[i]->GetSize(), g_SceneMgr.GetObj()[i]->GetColor().r, g_SceneMgr.GetObj()[i]->GetColor().g,
-				g_SceneMgr.GetObj()[i]->GetColor().b, g_SceneMgr.GetObj()[i]->GetColor().a);
-		}
-	}
+	g_SceneMgr.Render();
 
 	g_SceneMgr.Update((float)Time);
 	glutSwapBuffers();
@@ -54,13 +46,14 @@ void Idle(void)
 void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		Pos pos(x, y, 0.0f);
-		pos.x = x - 250.0f;
-		pos.y = 250.0f - y;
-		CObject obj;
-		obj.Init(pos, 4, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		g_SceneMgr.AddObject(obj);
-
+		if (g_SceneMgr.GetObjNum() < MAX_CHARACTER_NUM + 1) {
+			Pos pos(x, y, 0.0f);
+			pos.x = x - 250.0f;
+			pos.y = 250.0f - y;
+			CObject obj;
+			obj.Init(OBJECT_CHARACTER, pos, CHARACTER_SIZE, Color(1.0f, 1.0f, 1.0f, 1.0f));
+			g_SceneMgr.AddObject(obj);
+		}
 
 	}
 
@@ -87,7 +80,6 @@ int main(int argc, char **argv)
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();
-	g_SceneMgr.Init();
 
 	if (glewIsSupported("GL_VERSION_3_0"))
 	{
@@ -99,11 +91,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
-	if (!g_Renderer->IsInitialized())
-	{
-		std::cout << "Renderer could not be initialized.. \n";
-	}
+	g_SceneMgr.Init();
 
 	glutDisplayFunc(RenderScene);
 	glutIdleFunc(Idle);
@@ -113,7 +101,6 @@ int main(int argc, char **argv)
 
 	glutMainLoop();
 
-	delete g_Renderer;
 
     return 0;
 }

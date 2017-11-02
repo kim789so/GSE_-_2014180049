@@ -1,6 +1,14 @@
 
-
+#include "Define.h"
 #define MAX_OBJECTS_COUNT 50
+
+enum ObjectType {
+	OBJECT_BUILDING,
+	OBJECT_CHARACTER,
+	OBJECT_BULLET,
+	OBJECT_ARROW
+
+};
 
 struct Pos
 {
@@ -30,22 +38,35 @@ struct Color
 	}
 };
 
+
 class CObject
 {
 public:
-	void Init(Pos pos, float size, Color color);
+	void Init(ObjectType objType, Pos pos, float size, Color color);
 	void Update(float time);
 
 public:
+	ObjectType GetObjType() { return m_objType; }
 	Pos GetPos() { return m_pos; }
 	float GetSize() { return m_size; }
 	Color GetColor() { return m_color; }
 	float GetLife() { return m_life; }
 	float GetLifeTime() { return m_lifeTime; }
+	float GetTime() { return m_time; }
+	vector<CObject*> GetBullet() { return m_bullet; }
+
 public:
 	void SetPos(const Pos pos) { m_pos = pos; }
 	void SetSize(float size) { m_size = size; }
 	void SetColor(Color color) { m_color = color; }
+
+public:
+	void GotDamage(float damage) { m_life -= damage; }
+	void Die() { m_life = 0.0f; }
+
+public:
+	void Move();
+	void CreateBullet();
 
 public:
 	bool CheckCollision(CObject* other);
@@ -56,5 +77,8 @@ protected:
 	float m_size;
 	Color m_color;
 	float m_life, m_lifeTime;
-
+	float m_time;
+	ObjectType m_objType;
+	DWORD m_bulletCreateTime;
+	vector<CObject*> m_bullet;
 };
