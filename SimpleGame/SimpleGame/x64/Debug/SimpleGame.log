@@ -1,9 +1,2 @@
-﻿  CObject.cpp
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
-  SimpleGame.cpp
-c:\users\김상수\desktop\겜소공\gse_2_2014180049\simplegame\simplegame\simplegame.cpp(50): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  SceneMgr.cpp
-  코드를 생성하고 있습니다...
-  SimpleGame.vcxproj -> C:\Users\김상수\Desktop\겜소공\GSE_2_2014180049\SimpleGame\x64\Debug\SimpleGame.exe
-  SimpleGame.vcxproj -> C:\Users\김상수\Desktop\겜소공\GSE_2_2014180049\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)
+﻿  SimpleGame.vcxproj -> C:\Users\김상수\Desktop\GSE_2_2014180049-master\GSE_2_2014180049-master\SimpleGame\x64\Debug\SimpleGame.exe
+  SimpleGame.vcxproj -> C:\Users\김상수\Desktop\GSE_2_2014180049-master\GSE_2_2014180049-master\SimpleGame\x64\Debug\SimpleGame.pdb (Partial PDB)
