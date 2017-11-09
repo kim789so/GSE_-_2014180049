@@ -17,7 +17,7 @@ using namespace std;
 #define LIFE_TIME 3000
 
 #define CHARACTER_LIFE 10
-#define CHARACTER_SPEED 300.0f
+#define CHARACTER_SPEED 200.0f
 #define CHARACTER_SIZE 10
 
 #define BUILDING_LIFE 500
@@ -25,7 +25,11 @@ using namespace std;
 #define BUILDING_SIZE 50
 
 #define BULLET_LIFE 20
-#define BULLET_SPEED 600.0f
-#define BULLET_SIZE 2
+#define BULLET_SPEED 100.0f
+#define BULLET_SIZE 5
+
+#define ARROW_LIFE 10
+#define ARROW_SPEED 100.0f
+#define ARROW_SIZE 5
 
 #define MAX_CHARACTER_NUM 10

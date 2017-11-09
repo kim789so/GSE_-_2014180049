@@ -54,7 +54,7 @@ public:
 	float GetLifeTime() { return m_lifeTime; }
 	float GetTime() { return m_time; }
 	vector<CObject*> GetBullet() { return m_bullet; }
-
+	vector<CObject*> GetArrow() { return m_arrow; }
 public:
 	void SetPos(const Pos pos) { m_pos = pos; }
 	void SetSize(float size) { m_size = size; }
@@ -67,6 +67,7 @@ public:
 public:
 	void Move();
 	void CreateBullet();
+	void CreateArrow();
 
 public:
 	bool CheckCollision(CObject* other);
@@ -80,5 +81,7 @@ protected:
 	float m_time;
 	ObjectType m_objType;
 	DWORD m_bulletCreateTime;
+	DWORD m_arrowCreateTime;
 	vector<CObject*> m_bullet;
+	vector<CObject*> m_arrow;
 };

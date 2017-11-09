@@ -17,6 +17,8 @@ void SceneMgr::Init()
 	{
 		std::cout << "Renderer could not be initialized.. \n";
 	}
+
+	m_buildingImg = m_renderer->CreatePngTexture("./Resource/Building.png");
 }
 
 
@@ -36,12 +38,26 @@ void SceneMgr::Render()
 {
 	for (int i = 0; i < m_objCnt; ++i) {
 		if (m_obj[i] != nullptr) {
+
+			if(m_obj[i]->GetObjType() == OBJECT_BUILDING)
+				m_renderer->DrawTexturedRect(m_obj[i]->GetPos().x, m_obj[i]->GetPos().y, m_obj[i]->GetPos().z,
+					m_obj[i]->GetSize(), m_obj[i]->GetColor().r, m_obj[i]->GetColor().g,
+					m_obj[i]->GetColor().b, m_obj[i]->GetColor().a,m_buildingImg);
+			else
 			m_renderer->DrawSolidRect(m_obj[i]->GetPos().x, m_obj[i]->GetPos().y, m_obj[i]->GetPos().z,
 				m_obj[i]->GetSize(), m_obj[i]->GetColor().r, m_obj[i]->GetColor().g,
 				m_obj[i]->GetColor().b, m_obj[i]->GetColor().a);
 
 			if (m_obj[i]->GetObjType() == OBJECT_BUILDING) {
 				for (auto& d : m_obj[i]->GetBullet()) {
+					m_renderer->DrawSolidRect(d->GetPos().x, d->GetPos().y, d->GetPos().z,
+						d->GetSize(), d->GetColor().r, d->GetColor().g,
+						d->GetColor().b, d->GetColor().a);
+				}
+			}
+
+			if (m_obj[i]->GetObjType() == OBJECT_CHARACTER) {
+				for (auto& d : m_obj[i]->GetArrow()) {
 					m_renderer->DrawSolidRect(d->GetPos().x, d->GetPos().y, d->GetPos().z,
 						d->GetSize(), d->GetColor().r, d->GetColor().g,
 						d->GetColor().b, d->GetColor().a);
@@ -61,8 +77,22 @@ void SceneMgr::Update(float time)
 					for (auto& d : m_obj[i]->GetBullet()) {
 						m_obj[j]->CheckCollision(d);
 					}
+					for (auto& d : m_obj[j]->GetArrow()) {
+						m_obj[i]->CheckCollision(d);
+					}
 				}
 			}
+		}
+
+		for (int j = 0; j < m_objCnt; ++j) {
+			if (m_obj[i] != nullptr && m_obj[j] != nullptr && m_obj[i] != m_obj[j]) {
+				if (m_obj[i]->GetObjType() == OBJECT_CHARACTER && m_obj[j]->GetObjType() == OBJECT_CHARACTER) {
+					for (auto& d : m_obj[i]->GetArrow()) {
+						m_obj[j]->CheckCollision(d);
+					}
+				}
+			}
+
 		}
 		for (int j = 0; j < m_objCnt; ++j) {
 			if(m_obj[i] != nullptr && m_obj[j] != nullptr)

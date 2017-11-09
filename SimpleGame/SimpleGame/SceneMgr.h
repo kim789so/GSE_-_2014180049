@@ -21,4 +21,5 @@ private:
 	DWORD m_time;
 	int m_objCnt;
 	Renderer* m_renderer;
+	int m_buildingImg;
 };

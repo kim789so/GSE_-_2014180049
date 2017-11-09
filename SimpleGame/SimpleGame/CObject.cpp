@@ -13,8 +13,9 @@ void CObject::Init(ObjectType objType, Pos pos, float size, Color color)
 
 	switch (m_objType) {
 	case OBJECT_BUILDING: speed = BUILDING_SPEED; m_life = BUILDING_LIFE; m_bulletCreateTime = GetTickCount(); break;
-	case OBJECT_CHARACTER: speed = CHARACTER_SPEED; m_life = CHARACTER_LIFE; break;
+	case OBJECT_CHARACTER: speed = CHARACTER_SPEED; m_life = CHARACTER_LIFE; m_arrowCreateTime = GetTickCount(); break;
 	case OBJECT_BULLET: speed = BULLET_SPEED; m_life = BULLET_LIFE; break;
+	case OBJECT_ARROW: speed = ARROW_SPEED; m_life = ARROW_LIFE;  break;
 	default: break;
 	}
 	switch (rand() % 8) {
@@ -42,10 +43,17 @@ bool CObject::CheckCollision(CObject* other)
 			other->GotDamage(m_life);
 			this->Die();
 		}
+
 		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_CHARACTER) {
 			this->GotDamage(other->GetLife());
 			other->Die();
 		}
+
+		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_ARROW) {
+			this->GotDamage(other->GetLife());
+			other->Die();
+		}
+
 
 		if (m_objType == OBJECT_BULLET && other->GetObjType() == OBJECT_CHARACTER) {
 			other->GotDamage(m_life);
@@ -55,6 +63,13 @@ bool CObject::CheckCollision(CObject* other)
 			this->GotDamage(other->GetLife());
 			other->Die();
 		}
+
+		if (m_objType == OBJECT_CHARACTER && other->GetObjType() == OBJECT_ARROW) {
+
+			this->GotDamage(other->GetLife());
+			other->Die();
+		}
+
 		return true;
 	}
 	
@@ -84,6 +99,13 @@ void CObject::CreateBullet()
 	obj->Init(OBJECT_BULLET, m_pos, BULLET_SIZE, Color(1.0f, 0.0f, 0.0f, 1.0f));
 	m_bullet.emplace_back(obj);
 }
+void CObject::CreateArrow()
+{
+	CObject* obj = new CObject();
+	obj->Init(OBJECT_ARROW, m_pos, ARROW_SIZE, Color(0.0f, 1.0f, 0.0f, 1.0f));
+	m_arrow.emplace_back(obj);
+}
+
 void CObject::Update(float time)
 {
 	
@@ -96,15 +118,29 @@ void CObject::Update(float time)
 		}
 
 		for (auto& d : m_bullet) d->Update(m_time * 1000.0f);
-				vector<CObject*>::iterator itor = m_bullet.begin();
-				while (itor != m_bullet.end()) {
-					if ((*itor)->GetLife() <= 0 || (*itor)->GetLifeTime() <= 0) itor = m_bullet.erase(itor);
-					else ++itor;
+		vector<CObject*>::iterator itor = m_bullet.begin();
+		while (itor != m_bullet.end()) {
+			if ((*itor)->GetLife() <= 0 || (*itor)->GetLifeTime() <= 0) itor = m_bullet.erase(itor);
+			else ++itor;
 
-				}
+		}
 
 
-		
+
+	}
+
+	if (m_objType == OBJECT_CHARACTER) {
+		if (m_arrowCreateTime + 500 < GetTickCount()) {
+			m_arrowCreateTime = GetTickCount();
+			this->CreateArrow();
+		}
+		for (auto& d : m_arrow) d->Update(m_time * 1000.0f);
+		vector<CObject*>::iterator itor = m_arrow.begin();
+		while (itor != m_arrow.end()) {
+			if ((*itor)->GetLife() <= 0 || (*itor)->GetLifeTime() <= 0) itor = m_arrow.erase(itor);
+			else ++itor;
+
+		}
 	}
 
 	//m_lifeTime -= time;
