@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "Define.h"
 
-void CObject::Init(ObjectType objType, Pos pos, float size, Color color)
+void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color)
 {
+	m_teamType = teamType;
 	m_objType = objType;
 	m_pos = pos;
 	m_size = size;
@@ -54,6 +55,11 @@ bool CObject::CheckCollision(CObject* other)
 			other->Die();
 		}
 
+		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_BULLET) {
+			this->GotDamage(other->GetLife());
+			other->Die();
+		}
+
 
 		if (m_objType == OBJECT_BULLET && other->GetObjType() == OBJECT_CHARACTER) {
 			other->GotDamage(m_life);
@@ -96,13 +102,15 @@ void CObject::Move()
 void CObject::CreateBullet()
 {
 	CObject* obj = new CObject();
-	obj->Init(OBJECT_BULLET, m_pos, BULLET_SIZE, Color(1.0f, 0.0f, 0.0f, 1.0f));
+	if(m_teamType == TEAM_RED) obj->Init(TEAM_RED, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color);
+	else obj->Init(TEAM_BLUE, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color);
 	m_bullet.emplace_back(obj);
 }
 void CObject::CreateArrow()
 {
 	CObject* obj = new CObject();
-	obj->Init(OBJECT_ARROW, m_pos, ARROW_SIZE, Color(0.0f, 1.0f, 0.0f, 1.0f));
+	if (m_teamType == TEAM_RED) obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(0.5f, 0.2f, 0.7f, 1.0f));
+	else obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(1.0f, 1.0f, 0.0f, 1.0f));
 	m_arrow.emplace_back(obj);
 }
 
@@ -112,7 +120,7 @@ void CObject::Update(float time)
 	m_time = time / 1000.0f;
 	this->Move();
 	if (m_objType == OBJECT_BUILDING) {
-		if (m_bulletCreateTime + 500 < GetTickCount()) {
+		if (m_bulletCreateTime + BULLET_CREATE_TIME < GetTickCount()) {
 			m_bulletCreateTime = GetTickCount();
 			this->CreateBullet();
 		}
@@ -130,7 +138,7 @@ void CObject::Update(float time)
 	}
 
 	if (m_objType == OBJECT_CHARACTER) {
-		if (m_arrowCreateTime + 500 < GetTickCount()) {
+		if (m_arrowCreateTime + ARROW_CREATE_TIME < GetTickCount()) {
 			m_arrowCreateTime = GetTickCount();
 			this->CreateArrow();
 		}

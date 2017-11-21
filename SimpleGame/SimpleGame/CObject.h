@@ -10,6 +10,10 @@ enum ObjectType {
 
 };
 
+enum TeamType{
+	TEAM_RED,
+	TEAM_BLUE
+};
 struct Pos
 {
 	float x, y, z;
@@ -42,7 +46,7 @@ struct Color
 class CObject
 {
 public:
-	void Init(ObjectType objType, Pos pos, float size, Color color);
+	void Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color);
 	void Update(float time);
 
 public:
@@ -53,6 +57,7 @@ public:
 	float GetLife() { return m_life; }
 	float GetLifeTime() { return m_lifeTime; }
 	float GetTime() { return m_time; }
+	TeamType GetTeamType() { return m_teamType; }
 	vector<CObject*> GetBullet() { return m_bullet; }
 	vector<CObject*> GetArrow() { return m_arrow; }
 public:
@@ -82,6 +87,7 @@ protected:
 	ObjectType m_objType;
 	DWORD m_bulletCreateTime;
 	DWORD m_arrowCreateTime;
+	TeamType m_teamType;
 	vector<CObject*> m_bullet;
 	vector<CObject*> m_arrow;
 };

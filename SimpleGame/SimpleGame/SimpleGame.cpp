@@ -22,6 +22,7 @@ SceneMgr g_SceneMgr;
 
 DWORD last = GetTickCount();
 DWORD Time = 0;
+
 void RenderScene(void)
 {
 	DWORD curr = GetTickCount();
@@ -46,15 +47,15 @@ void Idle(void)
 void MouseInput(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		if (g_SceneMgr.GetObjNum() < MAX_CHARACTER_NUM + 1) {
-			Pos pos(x, y, 0.0f);
-			pos.x = x - 250.0f;
-			pos.y = 250.0f - y;
-			CObject obj;
-			obj.Init(OBJECT_CHARACTER, pos, CHARACTER_SIZE, Color(1.0f, 1.0f, 1.0f, 1.0f));
-			g_SceneMgr.AddObject(obj);
-		}
 
+		Pos pos(x, y, 0.0f);
+		pos.x = x - WINDOW_WIDTH / 2.0f;
+		pos.y = WINDOW_HEIGHT / 2.0f - y;
+		if (pos.y < 0.0f && g_SceneMgr.CanAddRedCharacter()) {
+			CObject obj;
+			obj.Init(TEAM_BLUE, OBJECT_CHARACTER, pos, CHARACTER_SIZE, Color(0.0f, 0.0f, 1.0f, 1.0f));
+			g_SceneMgr.AddBlueObject(obj);
+		}
 	}
 
 	RenderScene();
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glutCreateWindow("Game Software Engineering KPU");
 
 	glewInit();

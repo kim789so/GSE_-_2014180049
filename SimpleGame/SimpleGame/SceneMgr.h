@@ -12,14 +12,17 @@ public:
 	void Update(float time);
 
 public:
-	CObject** GetObj() { return m_obj; }
-	int GetObjNum() { return m_objCnt; }
-	void AddObject(CObject obj);
+	CObject** GetRedObj() { return m_obj[0]; }
+	int GetRedObjNum() { return m_objCnt[0]; }
+	void AddRedObject(CObject obj);
+	bool CanAddRedCharacter();
+	void AddBlueObject(CObject obj);
 
 private:
-	CObject* m_obj[MAX_OBJECTS_COUNT];
+	CObject* m_obj[2][MAX_OBJECTS_COUNT];
 	DWORD m_time;
-	int m_objCnt;
+	DWORD m_createTime[2];
+	int m_objCnt[2];
 	Renderer* m_renderer;
-	int m_buildingImg;
+	int m_buildingImg[2];
 };
