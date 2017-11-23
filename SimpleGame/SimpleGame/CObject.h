@@ -46,7 +46,7 @@ struct Color
 class CObject
 {
 public:
-	void Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color);
+	void Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color, float level);
 	void Update(float time);
 
 public:
@@ -60,6 +60,7 @@ public:
 	TeamType GetTeamType() { return m_teamType; }
 	vector<CObject*> GetBullet() { return m_bullet; }
 	vector<CObject*> GetArrow() { return m_arrow; }
+	float GetLevel() { return m_level; }
 public:
 	void SetPos(const Pos pos) { m_pos = pos; }
 	void SetSize(float size) { m_size = size; }
@@ -84,6 +85,7 @@ protected:
 	Color m_color;
 	float m_life, m_lifeTime;
 	float m_time;
+	float m_level;
 	ObjectType m_objType;
 	DWORD m_bulletCreateTime;
 	DWORD m_arrowCreateTime;

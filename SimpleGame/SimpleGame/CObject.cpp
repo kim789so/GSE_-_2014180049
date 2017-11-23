@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Define.h"
 
-void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color)
+void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, Color color, float level)
 {
 	m_teamType = teamType;
 	m_objType = objType;
@@ -9,6 +9,7 @@ void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, C
 	m_size = size;
 	m_color = color;
 	m_lifeTime = LIFE_TIME;
+	m_level = level;
 
 	float speed = BULLET_SPEED;
 
@@ -102,15 +103,15 @@ void CObject::Move()
 void CObject::CreateBullet()
 {
 	CObject* obj = new CObject();
-	if(m_teamType == TEAM_RED) obj->Init(TEAM_RED, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color);
-	else obj->Init(TEAM_BLUE, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color);
+	if(m_teamType == TEAM_RED) obj->Init(TEAM_RED, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color, LEVEL_UNDERGROUND);
+	else obj->Init(TEAM_BLUE, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color, LEVEL_UNDERGROUND);
 	m_bullet.emplace_back(obj);
 }
 void CObject::CreateArrow()
 {
 	CObject* obj = new CObject();
-	if (m_teamType == TEAM_RED) obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(0.5f, 0.2f, 0.7f, 1.0f));
-	else obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(1.0f, 1.0f, 0.0f, 1.0f));
+	if (m_teamType == TEAM_RED) obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(0.5f, 0.2f, 0.7f, 1.0f), LEVEL_UNDERGROUND);
+	else obj->Init(m_teamType, OBJECT_ARROW, m_pos, ARROW_SIZE, Color(1.0f, 1.0f, 0.0f, 1.0f), LEVEL_UNDERGROUND);
 	m_arrow.emplace_back(obj);
 }
 

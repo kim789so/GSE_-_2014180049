@@ -53,7 +53,7 @@ void MouseInput(int button, int state, int x, int y)
 		pos.y = WINDOW_HEIGHT / 2.0f - y;
 		if (pos.y < 0.0f && g_SceneMgr.CanAddRedCharacter()) {
 			CObject obj;
-			obj.Init(TEAM_BLUE, OBJECT_CHARACTER, pos, CHARACTER_SIZE, Color(0.0f, 0.0f, 1.0f, 1.0f));
+			obj.Init(TEAM_BLUE, OBJECT_CHARACTER, pos, CHARACTER_SIZE, Color(0.0f, 0.0f, 1.0f, 1.0f), LEVEL_GROUND);
 			g_SceneMgr.AddBlueObject(obj);
 		}
 	}
