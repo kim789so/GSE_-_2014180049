@@ -21,7 +21,7 @@ using namespace std;
 
 #define CHARACTER_LIFE 100
 #define CHARACTER_SPEED 300.0f
-#define CHARACTER_SIZE 30
+#define CHARACTER_SIZE 70
 
 #define BUILDING_LIFE 500
 #define BUILDING_SPEED 0.0f

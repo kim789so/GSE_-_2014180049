@@ -20,15 +20,15 @@ void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, C
 	case OBJECT_ARROW: speed = ARROW_SPEED; m_life = ARROW_LIFE;  break;
 	default: break;
 	}
-	switch (rand() % 8) {
-		case 0: m_vPos.x = speed; break;
-		case 1: m_vPos.x = -speed; break;
-		case 2: m_vPos.y = speed; break;
-		case 3: m_vPos.y = -speed; break;
-		case 4: m_vPos.x = speed; m_vPos.y = speed; break;
-		case 5: m_vPos.x = speed; m_vPos.y = -speed; break;
-		case 6: m_vPos.x = -speed; m_vPos.y = speed; break;
-		case 7: m_vPos.x = -speed; m_vPos.y = -speed; break;
+	switch (rand() % 4) {
+		case 0: m_vPos.x = speed; m_col = 0; m_row = 2;  break;
+		case 1: m_vPos.x = -speed; m_col = 0; m_row = 1; break;
+		case 2: m_vPos.y = speed; m_col = 0; m_row = 3; break;
+		case 3: m_vPos.y = -speed; m_col = 0; m_row = 0; break;
+	//	case 4: m_vPos.x = speed; m_vPos.y = speed; break;
+	//	case 5: m_vPos.x = speed; m_vPos.y = -speed; break;
+	//	case 6: m_vPos.x = -speed; m_vPos.y = speed; break;
+	//	case 7: m_vPos.x = -speed; m_vPos.y = -speed; break;
 		
 	}
 
@@ -85,17 +85,27 @@ bool CObject::CheckCollision(CObject* other)
 void CObject::Move()
 {
 	if ((m_pos.x + (m_size / 2) > WINDOW_WIDTH / 2) || // End of Right 
-		((m_pos.x - (m_size / 2) <  WINDOW_WIDTH / 2.0 * -1.0f))) // End of Left 
+		((m_pos.x - (m_size / 2) < WINDOW_WIDTH / 2.0 * -1.0f))) // End of Left 
+	{
 		m_vPos.x = -m_vPos.x;
+		if (m_vPos.x > 0) m_row = 2;
+		else m_row = 1;
+	}
 
 	if ((m_pos.y + (m_size / 2) > WINDOW_HEIGHT / 2) || // End of Top 
-		((m_pos.y - (m_size / 2) <  WINDOW_HEIGHT / 2.0 * -1.0f))) // End of Bottom 
+		((m_pos.y - (m_size / 2) < WINDOW_HEIGHT / 2.0 * -1.0f))) // End of Bottom 
+	{
 		m_vPos.y = -m_vPos.y;
+		if (m_vPos.y > 0) m_row = 3;
+		else m_row = 0;
+
+	}
 
 	m_pos.x = m_pos.x + m_vPos.x * m_time;
 	m_pos.y = m_pos.y + m_vPos.y * m_time;
 	m_pos.z = m_pos.z + m_vPos.z * m_time;
 
+	m_col = (m_col + 1) % 4;
 //	cout << m_time << endl;
 	//if (m_objType == OBJECT_BULLET) cout << m_vPos.x << endl;
 }

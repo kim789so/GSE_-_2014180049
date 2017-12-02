@@ -25,4 +25,7 @@ private:
 	int m_objCnt[2];
 	Renderer* m_renderer;
 	int m_buildingImg[2];
+	int m_backImg;
+	int m_characterImg[2];
+	int m_bulletEffectImg;
 };

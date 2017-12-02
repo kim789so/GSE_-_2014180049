@@ -43,6 +43,10 @@ void SceneMgr::Init()
 	
 	m_buildingImg[TEAM_RED] = m_renderer->CreatePngTexture("./Resource/Red.png");
 	m_buildingImg[TEAM_BLUE] = m_renderer->CreatePngTexture("./Resource/Blue.png");
+	m_backImg = m_renderer->CreatePngTexture("./Resource/BackGround.png");
+	m_characterImg[TEAM_RED] = m_renderer->CreatePngTexture("./Resource/RedCharacter.png");
+	m_characterImg[TEAM_BLUE] = m_renderer->CreatePngTexture("./Resource/BlueCharacter.png");
+	m_bulletEffectImg = m_renderer->CreatePngTexture("./Resource/effect.png");
 }
 
 
@@ -73,6 +77,9 @@ void SceneMgr::AddBlueObject(CObject obj)
 
 void SceneMgr::Render()
 {
+	m_renderer->DrawTexturedRect(0.0f, 0.0f, 0.0f,
+		WINDOW_HEIGHT, 1.0f, 1.0f, 1.0f,
+		0.1f, m_backImg, LEVEL_UNDERGROUND);
 	for(int k = 0; k<2; ++k){
 	for (int i = 0; i < m_objCnt[k]; ++i) {
 		if (m_obj[k][i] != nullptr) {
@@ -88,9 +95,16 @@ void SceneMgr::Render()
 
 			}
 			else {
-				m_renderer->DrawSolidRect(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y, m_obj[k][i]->GetPos().z,
+				if(m_obj[k][i]->GetTeamType() == TEAM_RED)
+				m_renderer->DrawTexturedRectSeq(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y, m_obj[k][i]->GetPos().z,
 					m_obj[k][i]->GetSize(), m_obj[k][i]->GetColor().r, m_obj[k][i]->GetColor().g,
-					m_obj[k][i]->GetColor().b, m_obj[k][i]->GetColor().a, m_obj[k][i]->GetLevel());
+					m_obj[k][i]->GetColor().b, m_obj[k][i]->GetColor().a,
+					m_characterImg[TEAM_RED], m_obj[k][i]->GetCol(), m_obj[k][i]->GetRow(), 4, 4, m_obj[k][i]->GetLevel());
+				else
+					m_renderer->DrawTexturedRectSeq(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y, m_obj[k][i]->GetPos().z,
+						m_obj[k][i]->GetSize(), m_obj[k][i]->GetColor().r, m_obj[k][i]->GetColor().g,
+						m_obj[k][i]->GetColor().b, m_obj[k][i]->GetColor().a,
+						m_characterImg[TEAM_BLUE], m_obj[k][i]->GetCol(), m_obj[k][i]->GetRow(), 4, 4, m_obj[k][i]->GetLevel());
 
 				m_renderer->DrawSolidRectGauge(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y + m_obj[k][i]->GetSize() , m_obj[k][i]->GetPos().z,
 					m_obj[k][i]->GetSize(), m_obj[k][i]->GetSize() / 2.0f, m_obj[k][i]->GetColor().r, m_obj[k][i]->GetColor().g,
@@ -102,6 +116,10 @@ void SceneMgr::Render()
 					m_renderer->DrawSolidRect(d->GetPos().x, d->GetPos().y, d->GetPos().z,
 						d->GetSize(), d->GetColor().r, d->GetColor().g,
 						d->GetColor().b, d->GetColor().a, m_obj[k][i]->GetLevel());
+
+					m_renderer->DrawParticle(d->GetPos().x, d->GetPos().y, d->GetPos().z,
+						d->GetSize(), d->GetColor().r, d->GetColor().g, d->GetColor().b,
+						d->GetColor().a, 0,0, m_bulletEffectImg, 1000);
 				}
 			}
 

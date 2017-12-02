@@ -63,6 +63,8 @@ public:
 	float GetLevel() { return m_level; }
 public:
 	void SetPos(const Pos pos) { m_pos = pos; }
+	int GetCol() { return m_col; }
+	int GetRow() { return m_row; }
 	void SetSize(float size) { m_size = size; }
 	void SetColor(Color color) { m_color = color; }
 
@@ -92,4 +94,5 @@ protected:
 	TeamType m_teamType;
 	vector<CObject*> m_bullet;
 	vector<CObject*> m_arrow;
+	int m_col, m_row;
 };
