@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Define.h"
 #include "Renderer.h"
+#include "Sound.h"
 
 void SceneMgr::Init()
 {
@@ -47,6 +48,10 @@ void SceneMgr::Init()
 	m_characterImg[TEAM_RED] = m_renderer->CreatePngTexture("./Resource/RedCharacter.png");
 	m_characterImg[TEAM_BLUE] = m_renderer->CreatePngTexture("./Resource/BlueCharacter.png");
 	m_bulletEffectImg = m_renderer->CreatePngTexture("./Resource/effect.png");
+
+	Sound* sound = new Sound();
+	int soundBG = sound->CreateSound("Dependencies/SoundSamples/MF-W-90.XM");
+	sound->PlaySoundz(soundBG, true, 0.2f);
 }
 
 
@@ -134,7 +139,7 @@ void SceneMgr::Render()
 		}
 	}
 	}
-
+	m_renderer->DrawText(0, 0, GLUT_BITMAP_HELVETICA_18,1.0f,1.0f,1.0f, "SimpleGame");
 }
 
 bool SceneMgr::CanAddRedCharacter()

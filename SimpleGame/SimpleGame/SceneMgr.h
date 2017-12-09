@@ -4,6 +4,7 @@ class COBject;
 class Renderer;
 
 #include <Windows.h>
+
 class SceneMgr
 {
 public:
