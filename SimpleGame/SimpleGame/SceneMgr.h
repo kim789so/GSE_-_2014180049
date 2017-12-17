@@ -29,4 +29,6 @@ private:
 	int m_backImg;
 	int m_characterImg[2];
 	int m_bulletEffectImg;
+	int m_snowImg;
+	float m_snowTime;
 };

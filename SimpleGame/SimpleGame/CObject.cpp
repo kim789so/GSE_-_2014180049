@@ -10,7 +10,7 @@ void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, C
 	m_color = color;
 	m_lifeTime = LIFE_TIME;
 	m_level = level;
-
+	m_pA = 1.0f;
 	float speed = BULLET_SPEED;
 
 	switch (m_objType) {
@@ -129,6 +129,11 @@ void CObject::Update(float time)
 {
 	
 	m_time = time / 1000.0f;
+	if (m_objType == OBJECT_BULLET && m_pTime < 1.0f) {
+		m_pTime += time / 1000.0f;
+		m_pA -= 0.01f;
+	}
+
 	this->Move();
 	if (m_objType == OBJECT_BUILDING) {
 		if (m_bulletCreateTime + BULLET_CREATE_TIME < GetTickCount()) {

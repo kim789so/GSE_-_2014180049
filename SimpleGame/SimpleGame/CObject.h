@@ -70,6 +70,8 @@ public:
 
 public:
 	void GotDamage(float damage) { m_life -= damage; }
+	float GetPTime() { return m_pTime * 1000.0f; }
+	float GetPA() { return m_pA; }
 	void Die() { m_life = 0.0f; }
 
 public:
@@ -95,4 +97,6 @@ protected:
 	vector<CObject*> m_bullet;
 	vector<CObject*> m_arrow;
 	int m_col, m_row;
+	float m_pTime;
+	float m_pA;
 };

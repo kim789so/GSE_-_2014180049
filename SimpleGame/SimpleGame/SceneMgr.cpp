@@ -52,6 +52,9 @@ void SceneMgr::Init()
 	Sound* sound = new Sound();
 	int soundBG = sound->CreateSound("Dependencies/SoundSamples/MF-W-90.XM");
 	sound->PlaySoundz(soundBG, true, 0.2f);
+
+	m_snowImg = m_renderer->CreatePngTexture("./Resource/effect.png");
+	m_snowTime = 0;
 }
 
 
@@ -122,9 +125,10 @@ void SceneMgr::Render()
 						d->GetSize(), d->GetColor().r, d->GetColor().g,
 						d->GetColor().b, d->GetColor().a, m_obj[k][i]->GetLevel());
 
+					if(d->GetPA() > 0.0f)
 					m_renderer->DrawParticle(d->GetPos().x, d->GetPos().y, d->GetPos().z,
 						d->GetSize(), d->GetColor().r, d->GetColor().g, d->GetColor().b,
-						d->GetColor().a, 0,0, m_bulletEffectImg, 1000);
+						d->GetPA(), 0,0, m_bulletEffectImg, d->GetPTime(), 0.1f);
 				}
 			}
 
@@ -140,6 +144,10 @@ void SceneMgr::Render()
 	}
 	}
 	m_renderer->DrawText(0, 0, GLUT_BITMAP_HELVETICA_18,1.0f,1.0f,1.0f, "SimpleGame");
+
+	m_renderer->DrawParticleClimate(0, 0, 0, 1, 1, 1, 1, 1, -0.1, -0.1, m_snowImg, m_snowTime, 0.01);
+	m_snowTime += 0.001f;
+
 }
 
 bool SceneMgr::CanAddRedCharacter()
