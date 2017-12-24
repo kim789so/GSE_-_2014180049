@@ -6,7 +6,8 @@ enum ObjectType {
 	OBJECT_BUILDING,
 	OBJECT_CHARACTER,
 	OBJECT_BULLET,
-	OBJECT_ARROW
+	OBJECT_ARROW,
+	OBJECT_ROCKET
 
 };
 
@@ -55,6 +56,7 @@ public:
 	float GetSize() { return m_size; }
 	Color GetColor() { return m_color; }
 	float GetLife() { return m_life; }
+	float GetShieldLife() { return m_shiledLife; }
 	float GetLifeTime() { return m_lifeTime; }
 	float GetTime() { return m_time; }
 	TeamType GetTeamType() { return m_teamType; }
@@ -70,15 +72,20 @@ public:
 
 public:
 	void GotDamage(float damage) { m_life -= damage; }
+	void GotShiledDamage(float damage) { m_shiledLife -= damage; }
 	float GetPTime() { return m_pTime * 1000.0f; }
 	float GetPA() { return m_pA; }
+	bool GotRocketDmg() { return m_gotRocketDmg; }
 	void Die() { m_life = 0.0f; }
 
 public:
 	void Move();
 	void CreateBullet();
 	void CreateArrow();
+	void CreateRocket();
 
+public:
+	bool IsOnShield();
 public:
 	bool CheckCollision(CObject* other);
 
@@ -93,10 +100,16 @@ protected:
 	ObjectType m_objType;
 	DWORD m_bulletCreateTime;
 	DWORD m_arrowCreateTime;
+	DWORD charTime;
+	DWORD m_shieldDuTime;
+	DWORD m_shieldActiveTime;
+	DWORD m_rocketTime;
 	TeamType m_teamType;
 	vector<CObject*> m_bullet;
 	vector<CObject*> m_arrow;
 	int m_col, m_row;
 	float m_pTime;
 	float m_pA;
+	float m_shiledLife;
+	bool m_gotRocketDmg;
 };

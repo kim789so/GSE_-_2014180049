@@ -48,9 +48,11 @@ void SceneMgr::Init()
 	m_characterImg[TEAM_RED] = m_renderer->CreatePngTexture("./Resource/RedCharacter.png");
 	m_characterImg[TEAM_BLUE] = m_renderer->CreatePngTexture("./Resource/BlueCharacter.png");
 	m_bulletEffectImg = m_renderer->CreatePngTexture("./Resource/effect.png");
+	m_expImg = m_renderer->CreatePngTexture("./Resource/Explosion.png");
 
-	Sound* sound = new Sound();
+	sound = new Sound();
 	int soundBG = sound->CreateSound("Dependencies/SoundSamples/MF-W-90.XM");
+	m_expSound = sound->CreateSound("Dependencies/SoundSamples/explosion.wav");
 	sound->PlaySoundz(soundBG, true, 0.2f);
 
 	m_snowImg = m_renderer->CreatePngTexture("./Resource/effect.png");
@@ -124,11 +126,20 @@ void SceneMgr::Render()
 					m_renderer->DrawSolidRect(d->GetPos().x, d->GetPos().y, d->GetPos().z,
 						d->GetSize(), d->GetColor().r, d->GetColor().g,
 						d->GetColor().b, d->GetColor().a, m_obj[k][i]->GetLevel());
-
 					if(d->GetPA() > 0.0f)
 					m_renderer->DrawParticle(d->GetPos().x, d->GetPos().y, d->GetPos().z,
 						d->GetSize(), d->GetColor().r, d->GetColor().g, d->GetColor().b,
 						d->GetPA(), 0,0, m_bulletEffectImg, d->GetPTime(), 0.1f);
+				}
+
+				if (m_obj[k][i]->IsOnShield()) {
+					m_renderer->DrawSolidRectGauge(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y - m_obj[k][i]->GetSize(), m_obj[k][i]->GetPos().z,
+						m_obj[k][i]->GetSize(), m_obj[k][i]->GetSize() / 5.0f, 1.0f, 1.0f,
+						1.0f, m_obj[k][i]->GetColor().a, m_obj[k][i]->GetShieldLife() / SHILED_LIFE, LEVEL_GOD);
+
+					m_renderer->DrawParticle(m_obj[k][i]->GetPos().x, m_obj[k][i]->GetPos().y, m_obj[k][i]->GetPos().z,
+						m_obj[k][i]->GetSize(), m_obj[k][i]->GetColor().r, m_obj[k][i]->GetColor().g, m_obj[k][i]->GetColor().b,
+						0.02f, 0, 0, m_bulletEffectImg, 1000, 0.1f);
 				}
 			}
 
@@ -184,7 +195,9 @@ void SceneMgr::Update(float time)
 				// 건물이랑 총알 충돌
 				if (m_obj[(k + 1) % 2][j] != nullptr && m_obj[(k + 1) % 2][j]->GetObjType() == OBJECT_BUILDING) {
 					for (auto& d : m_obj[(k + 1) % 2][j]->GetBullet()) {
-						m_obj[k][i]->CheckCollision(d);
+						if (m_obj[k][i]->CheckCollision(d) && d->GetObjType() == OBJECT_ROCKET) {
+							sound->PlaySoundz(m_expSound, false, 0.2f);
+						}
 					}
 				}
 				// 건물이랑 화살 충돌
@@ -208,10 +221,11 @@ void SceneMgr::Update(float time)
 
 		}
 		for (int j = 0; j < m_objCnt[(k + 1) % 2]; ++j) {
-			if(m_obj[k][i] != nullptr && m_obj[(k + 1) % 2][j] != nullptr)
-			m_obj[k][i]->CheckCollision(m_obj[(k + 1) % 2][j]);
-		}
+			if (m_obj[k][i] != nullptr && m_obj[(k + 1) % 2][j] != nullptr) 
+				m_obj[k][i]->CheckCollision(m_obj[(k + 1) % 2][j]);
+			}
 		
+
 	}
 
 	// 삭제
@@ -227,7 +241,8 @@ void SceneMgr::Update(float time)
 		m_obj[k][i]->Update(time);
 		
 	}
-	
+
+
 	}
 	
 }

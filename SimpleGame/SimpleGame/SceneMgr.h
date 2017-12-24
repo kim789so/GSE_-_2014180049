@@ -2,7 +2,7 @@
 
 class COBject;
 class Renderer;
-
+class Sound;
 #include <Windows.h>
 
 class SceneMgr
@@ -31,4 +31,7 @@ private:
 	int m_bulletEffectImg;
 	int m_snowImg;
 	float m_snowTime;
+	int m_expImg;
+	int m_expSound;
+	Sound* sound;
 };

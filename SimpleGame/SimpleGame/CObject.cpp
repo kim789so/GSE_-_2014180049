@@ -11,25 +11,38 @@ void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, C
 	m_lifeTime = LIFE_TIME;
 	m_level = level;
 	m_pA = 1.0f;
+	charTime = 0;
+	m_shiledLife = SHILED_LIFE;
 	float speed = BULLET_SPEED;
+	m_gotRocketDmg = false;
 
 	switch (m_objType) {
-	case OBJECT_BUILDING: speed = BUILDING_SPEED; m_life = BUILDING_LIFE; m_bulletCreateTime = GetTickCount(); break;
+	case OBJECT_BUILDING: speed = BUILDING_SPEED; m_life = BUILDING_LIFE; m_bulletCreateTime = GetTickCount(); m_shieldActiveTime = GetTickCount(); break;
 	case OBJECT_CHARACTER: speed = CHARACTER_SPEED; m_life = CHARACTER_LIFE; m_arrowCreateTime = GetTickCount(); break;
 	case OBJECT_BULLET: speed = BULLET_SPEED; m_life = BULLET_LIFE; break;
+	case OBJECT_ROCKET: speed = ROCKET_SPEED; m_life = ROCKET_LIFE; break;
 	case OBJECT_ARROW: speed = ARROW_SPEED; m_life = ARROW_LIFE;  break;
 	default: break;
 	}
+	if(m_objType != OBJECT_BULLET && m_objType != OBJECT_ARROW && m_objType != OBJECT_ROCKET)
 	switch (rand() % 4) {
 		case 0: m_vPos.x = speed; m_col = 0; m_row = 2;  break;
 		case 1: m_vPos.x = -speed; m_col = 0; m_row = 1; break;
 		case 2: m_vPos.y = speed; m_col = 0; m_row = 3; break;
 		case 3: m_vPos.y = -speed; m_col = 0; m_row = 0; break;
-	//	case 4: m_vPos.x = speed; m_vPos.y = speed; break;
-	//	case 5: m_vPos.x = speed; m_vPos.y = -speed; break;
-	//	case 6: m_vPos.x = -speed; m_vPos.y = speed; break;
-	//	case 7: m_vPos.x = -speed; m_vPos.y = -speed; break;
-		
+	}
+	else {
+		switch (rand() % 8) {
+		case 0: m_vPos.x = speed; m_col = 0; m_row = 2;  break;
+		case 1: m_vPos.x = -speed; m_col = 0; m_row = 1; break;
+		case 2: m_vPos.y = speed; m_col = 0; m_row = 3; break;
+		case 3: m_vPos.y = -speed; m_col = 0; m_row = 0; break;
+		case 4: m_vPos.x = speed; m_vPos.y = speed; break;
+		case 5: m_vPos.x = speed; m_vPos.y = -speed; break;
+		case 6: m_vPos.x = -speed; m_vPos.y = speed; break;
+		case 7: m_vPos.x = -speed; m_vPos.y = -speed; break;
+		}
+
 	}
 
 
@@ -37,26 +50,47 @@ void CObject::Init(TeamType teamType, ObjectType objType, Pos pos, float size, C
 
 bool CObject::CheckCollision(CObject* other)
 {
+
 	if (((m_pos.x + (m_size / 2)) > (other->GetPos().x - ((other->GetSize() / 2)))) && // Right 
 		((m_pos.x - (m_size / 2)) < (other->GetPos().x + (other->GetSize() / 2))) && // Left 
 		((m_pos.y + (m_size / 2)) > (other->GetPos().y - (other->GetSize() / 2))) && // Top 
 		((m_pos.y - (m_size / 2)) < (other->GetPos().y + (other->GetSize() / 2)))) { // Bottom 
 		if (m_objType == OBJECT_CHARACTER && other->GetObjType() == OBJECT_BUILDING) {
+			if (IsOnShield()) {
+				other->GotShiledDamage(m_life);
+				this->Die();
+				return true;
+			}
 			other->GotDamage(m_life);
 			this->Die();
 		}
 
 		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_CHARACTER) {
+			if (IsOnShield()) {
+				this->GotShiledDamage(other->GetLife());
+				other->Die();
+				return true;
+			}
 			this->GotDamage(other->GetLife());
 			other->Die();
 		}
 
 		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_ARROW) {
+			if (IsOnShield()) {
+				this->GotShiledDamage(other->GetLife());
+				other->Die();
+				return true;
+			}
 			this->GotDamage(other->GetLife());
 			other->Die();
 		}
 
 		if (m_objType == OBJECT_BUILDING && other->GetObjType() == OBJECT_BULLET) {
+			if (IsOnShield()) {
+				this->GotShiledDamage(other->GetLife());
+				other->Die();
+				return true;
+			}
 			this->GotDamage(other->GetLife());
 			other->Die();
 		}
@@ -80,6 +114,26 @@ bool CObject::CheckCollision(CObject* other)
 		return true;
 	}
 	
+	if (other->GetObjType() == OBJECT_ROCKET) {
+		double first, second;
+		double dist;
+
+		first = m_pos.x - other->GetPos().x;
+		second = m_pos.y - other->GetPos().y;
+		dist = sqrt(pow(first, 2) + pow(second, 2));
+		if (dist <  ROCKET_AREA) {
+			if (IsOnShield()) {
+				this->GotShiledDamage(other->GetLife());
+				other->Die();
+				m_gotRocketDmg = true;
+				return true;
+			}
+			this->GotDamage(other->GetLife());
+			other->Die();
+			m_gotRocketDmg = true;
+			return true;
+		}
+	}
 	return false;
 }
 void CObject::Move()
@@ -105,7 +159,10 @@ void CObject::Move()
 	m_pos.y = m_pos.y + m_vPos.y * m_time;
 	m_pos.z = m_pos.z + m_vPos.z * m_time;
 
-	m_col = (m_col + 1) % 4;
+	if (charTime > 1000 / 4) {
+		m_col = (m_col + 1) % 4;
+		charTime = 0;
+	}
 //	cout << m_time << endl;
 	//if (m_objType == OBJECT_BULLET) cout << m_vPos.x << endl;
 }
@@ -117,6 +174,15 @@ void CObject::CreateBullet()
 	else obj->Init(TEAM_BLUE, OBJECT_BULLET, m_pos, BULLET_SIZE, m_color, LEVEL_UNDERGROUND);
 	m_bullet.emplace_back(obj);
 }
+
+void CObject::CreateRocket()
+{
+	CObject* obj = new CObject();
+	if (m_teamType == TEAM_RED) obj->Init(TEAM_RED, OBJECT_ROCKET, m_pos, ROCKET_SIZE, m_color, LEVEL_UNDERGROUND);
+	else obj->Init(TEAM_BLUE, OBJECT_ROCKET, m_pos, ROCKET_SIZE, m_color, LEVEL_UNDERGROUND);
+	m_bullet.emplace_back(obj);
+}
+
 void CObject::CreateArrow()
 {
 	CObject* obj = new CObject();
@@ -125,6 +191,14 @@ void CObject::CreateArrow()
 	m_arrow.emplace_back(obj);
 }
 
+bool CObject::IsOnShield()
+{
+	if (m_shieldDuTime + SHILED_DURATION_TIME > GetTickCount() && m_shiledLife > 0) return true;
+	else{
+		m_shiledLife = 0;
+		return false;
+	}
+}
 void CObject::Update(float time)
 {
 	
@@ -140,7 +214,15 @@ void CObject::Update(float time)
 			m_bulletCreateTime = GetTickCount();
 			this->CreateBullet();
 		}
-
+		if (m_rocketTime + ROCKET_CREATE_TIME < GetTickCount() && m_teamType == TEAM_BLUE) {
+			m_rocketTime = GetTickCount();
+			this->CreateRocket();
+		}
+		if (m_shieldActiveTime + SHIELD_ACTIVE_TIME < GetTickCount()) {
+			m_shieldDuTime = GetTickCount();
+			m_shieldActiveTime = GetTickCount();
+			m_shiledLife = SHILED_LIFE;
+		}
 		for (auto& d : m_bullet) d->Update(m_time * 1000.0f);
 		vector<CObject*>::iterator itor = m_bullet.begin();
 		while (itor != m_bullet.end()) {
@@ -158,6 +240,7 @@ void CObject::Update(float time)
 			m_arrowCreateTime = GetTickCount();
 			this->CreateArrow();
 		}
+		charTime += m_time * 1000;
 		for (auto& d : m_arrow) d->Update(m_time * 1000.0f);
 		vector<CObject*>::iterator itor = m_arrow.begin();
 		while (itor != m_arrow.end()) {
